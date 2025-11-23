@@ -1,0 +1,20 @@
+---
+{{- if .Values.namespace.createNamespace }}
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: {{ .Values.namespace.name }}
+  annotations:
+    openshift.io/description: {{ .Values.namespace.description }}
+    openshift.io/display-name: {{ .Values.namespace.displayName }}
+    {{- if .Values.argocd.enabled }}
+    argocd.argoproj.io/sync-wave: "-10"
+    {{- end }}
+{{ include "oraclexe.customProjectAnnotations" . | indent 4 }}
+  labels:
+    kubernetes.io/metadata.name: {{ .Values.namespace.name }}
+spec:
+  finalizers:
+    - kubernetes
+{{- end }}
+---

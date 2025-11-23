@@ -1,0 +1,86 @@
+---
+argocd:
+  enabled: true
+
+####################
+# Application zone #
+####################
+app:
+  name: oraclexe
+  image: docker.io/gvenzl/oracle-xe:latest
+  #image: docker.io/gvenzl/oracle-free:23.5-faststart
+  #image: docker.io/gvenzl/oracle-free
+
+############################
+# Base project annotations #
+############################
+baseProjectAnnotations:
+
+##################
+# Namespace Zone #
+##################
+namespace:
+  createNamespace: true
+  name: dbaas-lab
+  description: DBaaS Lab
+  displayName: DBaaS Lab namespace
+
+########################
+# Service Account zone #
+########################
+serviceAccount:
+  create: true
+
+####################
+# ImageStream zone #
+####################
+imagestream:
+  createImageStream: true
+
+###########################
+# PVC (OAM, Logging zone) # ReadWriteOnce | ReadWriteMany | ReadOnlyMany
+###########################
+#storageClassNameDefault: ocs-external-storagecluster-ceph-rbd
+#storageClassNameDefault: file-ibmsc-gold
+#storageClassNameDefault: ocs-external-storagecluster-cephfs
+storageClassNameDefault: gp3-csi
+pvcs:
+  orcl:
+    createPvc: true
+    name: orcl
+    storageClassName: gp3-csi
+    size: 5Gi
+    volumeMode: Filesystem
+    accesModes: ReadWriteOnce
+    reclaimPolicy: Delete
+
+################
+# Service zone #
+################
+service:
+  createService: true
+  name: svc
+  serving_cert_secret_name: x509-https-secret
+  selector:
+    app: oraclexe
+    component: oraclexe
+
+#################
+# DataBase zone #
+#################
+db:
+  password: redhat00
+
+##################
+# Resources zone #
+##################
+deployment:
+  resources:
+    requests:
+      cpu: 400m
+      memory: 2Gi
+    limits:
+      cpu: 600m
+      memory: 3Gi
+#
+# EOF

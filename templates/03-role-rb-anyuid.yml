@@ -1,0 +1,31 @@
+---
+{{- if .Values.serviceAccount.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "oraclexe.nameWithSuffix" (dict "context" . "suffix" "anyuid-role")  }}
+  namespace: {{ .Values.namespace.name }}
+rules:
+  - apiGroups:
+    - security.openshift.io
+    resourceNames:
+      - anyuid
+    resources:
+      - securitycontextconstraints
+    verbs:
+      - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "oraclexe.nameWithSuffix" (dict "context" . "suffix" "anyuid-rolebinding")  }}
+  namespace: {{ .Values.namespace.name }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "oraclexe.nameWithSuffix" (dict "context" . "suffix" "anyuid-role")  }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "oraclexe.nameWithSuffix" (dict "context" . "suffix" (.Values.serviceAccount.name | default "sa"))  }}
+---
+{{- end }}

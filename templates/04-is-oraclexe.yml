@@ -1,0 +1,12 @@
+---
+{{- if .Values.imagestream.createImageStream }}
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ include "oraclexe.nameWithSuffix" (dict "context" . "suffix" (.Values.imagestream.name | default "")) }}
+  namespace: {{ .Values.namespace.name }}
+{{- if .Values.argocd.enabled }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+{{- end }}
+{{- end }}

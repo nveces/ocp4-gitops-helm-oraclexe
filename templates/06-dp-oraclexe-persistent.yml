@@ -1,0 +1,64 @@
+---
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  namespace: {{ $.Values.namespace.name }}
+  labels:
+{{ include "oraclexe.selectorLabels" . | indent 4 }}
+  annotations:
+    {{- if .Values.argocd.enabled }}
+    argocd.argoproj.io/sync-wave: "10"
+    {{- end }}
+{{ include "oraclexe.customProjectAnnotations" . | indent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      timeoutSeconds: 600
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+        version: v1
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          env:
+            - name: ORACLE_PASSWORD
+              value: {{ .Values.db.password }}
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 1521
+            protocol: TCP
+          - containerPort: 5500
+            protocol: TCP
+          resources:
+{{- toYaml .Values.deployment.resources | nindent 12 }}
+          securityContext: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /opt/oracle/oradata
+              name: oradata
+          image: {{ .Values.app.image }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 54321
+      serviceAccount: {{ include "oraclexe.nameWithSuffix" (dict "context" . "suffix" (.Values.serviceAccount.name | default "sa"))  }}
+      serviceAccountName: {{ include "oraclexe.nameWithSuffix" (dict "context" . "suffix" (.Values.serviceAccount.name | default "sa"))  }}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: oradata
+          persistentVolumeClaim:
+            claimName: {{ include "oraclexe.nameWithSuffix" (dict "context" $ "suffix" .Values.pvcs.orcl.name) }}
+    test: false
+---

@@ -1,0 +1,14 @@
+---
+{{- if .Values.serviceAccount.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "oraclexe.nameWithSuffix" (dict "context" . "suffix" (.Values.serviceAccount.name | default "sa"))  }}
+  namespace: {{ .Values.namespace.name }}
+{{- if $.Values.argocd.enabled }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+{{- end }}
+  labels:
+{{ include "oraclexe.selectorLabels" . | indent 4 }}
+{{- end }}

@@ -1,0 +1,26 @@
+---
+{{- if .Values.pvcs }}
+{{- range $index, $pvc := .Values.pvcs }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "oraclexe.nameWithSuffix" (dict "context" $ "suffix" $pvc.name) }}
+  namespace: {{ $.Values.namespace.name }}
+{{- if $.Values.argocd.enabled }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+{{- end }}
+  labels:
+{{- include "oraclexe.labels" $ | nindent 4 }}
+spec:
+  storageClassName: {{ $pvc.storageClassName | default $.Values.storageClassNameDefault }}
+  accessModes:
+    - {{ $pvc.accesModes | default "ReadWriteMany" }}
+  resources:
+    requests:
+      storage: {{ $pvc.size }}
+  volumeMode: {{ $pvc.volumeMode | default "Filesystem" }}
+  persistentVolumeReclaimPolicy: {{ $pvc.reclaimPolicy | default "Delete" }}
+{{- end }}
+{{- end }}
+---
