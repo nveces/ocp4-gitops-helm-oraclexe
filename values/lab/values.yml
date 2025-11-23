@@ -63,7 +63,6 @@ service:
   serving_cert_secret_name: x509-https-secret
   selector:
     app: oraclexe
-    component: oraclexe
 
 #################
 # DataBase zone #
