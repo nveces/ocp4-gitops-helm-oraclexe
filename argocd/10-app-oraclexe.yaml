@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: oraclexe-app
+  namespace: openshift-gitops
+spec:
+  source:
+    repoURL: https://github.com/nveces/ocp4-gitops-helm-oraclexe.git
+    targetRevision: main
+    path: .
+    helm:
+      valueFiles:
+        - values/lab/values.yml
+  #
+  destination:
+    #
+    namespace: dbaas-lab
+    #
+    server: https://kubernetes.default.svc
+  #
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+
+# EOF
