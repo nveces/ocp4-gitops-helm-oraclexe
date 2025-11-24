@@ -18,9 +18,6 @@ spec:
     matchLabels:
       app: {{ .Values.app.name }}
   strategy:
-    activeDeadlineSeconds: 21600
-    recreateParams:
-      timeoutSeconds: 600
     type: Recreate
   template:
     metadata:
@@ -60,5 +57,4 @@ spec:
         - name: oradata
           persistentVolumeClaim:
             claimName: {{ include "oraclexe.nameWithSuffix" (dict "context" $ "suffix" .Values.pvcs.orcl.name) }}
-    test: false
 ---
