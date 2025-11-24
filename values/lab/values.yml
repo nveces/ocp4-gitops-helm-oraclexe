@@ -52,7 +52,7 @@ pvcs:
     size: 5Gi
     volumeMode: Filesystem
     accesModes: ReadWriteOnce
-    reclaimPolicy: Delete
+    #reclaimPolicy: Delete
 
 ################
 # Service zone #

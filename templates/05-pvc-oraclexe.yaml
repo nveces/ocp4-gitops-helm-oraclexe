@@ -20,7 +20,9 @@ spec:
     requests:
       storage: {{ $pvc.size }}
   volumeMode: {{ $pvc.volumeMode | default "Filesystem" }}
+{{- if $pvc.reclaimPolicy }}
   persistentVolumeReclaimPolicy: {{ $pvc.reclaimPolicy | default "Delete" }}
+{{- end }}
 {{- end }}
 {{- end }}
 ---
