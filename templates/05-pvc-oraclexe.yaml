@@ -8,7 +8,7 @@ metadata:
   namespace: {{ $.Values.namespace.name }}
 {{- if $.Values.argocd.enabled }}
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: "15"
 {{- end }}
   labels:
 {{- include "oraclexe.labels" $ | nindent 4 }}

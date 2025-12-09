@@ -40,15 +40,15 @@ imagestream:
 ###########################
 # PVC (OAM, Logging zone) # ReadWriteOnce | ReadWriteMany | ReadOnlyMany
 ###########################
-#storageClassNameDefault: ocs-external-storagecluster-ceph-rbd
+storageClassNameDefault: ocs-external-storagecluster-ceph-rbd
 #storageClassNameDefault: file-ibmsc-gold
 #storageClassNameDefault: ocs-external-storagecluster-cephfs
-storageClassNameDefault: gp3-csi
+#storageClassNameDefault: gp3-csi
 pvcs:
   orcl:
     createPvc: true
     name: orcl
-    storageClassName: gp3-csi
+    storageClassName: ocs-external-storagecluster-ceph-rbd
     size: 5Gi
     volumeMode: Filesystem
     accesModes: ReadWriteOnce
